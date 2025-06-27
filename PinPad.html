@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+.center
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 600px) {
+    body
+    {
+        height: 100% !important;;
+        width: 100% !important;;
+    }
+
+    .pinpad
+    {
+        box-shadow: -1px 1px 18px 12px rgba(100,190,235,0.75);
+        background-color:black;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        margin:0px;
+    }
+}
+
+.pinpad
+{
+    box-shadow: -1px 1px 18px 12px rgba(100,190,235,0.75);
+    background-color:black;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 300px;
+}
+
+.uinput
+{
+    flex-direction: column;
+}
+
+.tf
+{
+    height: 70px;
+}
+
+.input
+{
+    height: 230px;
+}
+
+.tf input , .tf div
+{
+    margin: 0px 7px;
+    width: 14px;
+    border-radius: 15px;
+    border: 1px solid #b9b8b8;
+    margin: 0px 6px;
+    text-align: center;
+    color: black;
+    background-color: white;
+}
+
+.tf input:focus
+{
+    border: 2px solid #7a7676;
+}
+
+.pinpad .uinput > .row div
+{
+    color:#f2f2f2;
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    border: 1px solid #6b6b6b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#finalvalue
+{
+    display: ;
+}
+
+</style>
+
+
+<div class="pinpad center">
+    <div class="tf center">
+        <input id="pininput0" class="autoInputPin" type="password" maxlength="1" inputmode="none" data-next="1">
+        <input id="pininput1" class="autoInputPin" type="password" maxlength="1" inputmode="none" data-next="2">
+        <input id="pininput2" class="autoInputPin" type="password" maxlength="1" inputmode="none" data-next="3">
+        <input id="pininput3" class="autoInputPin" type="password" maxlength="1" inputmode="none" data-next="4">
+        <input id="pininput4" class="autoInputPin" type="password" maxlength="1" inputmode="none" data-next="5">
+        <input id="pininput5" class="autoInputPin" type="password" maxlength="1" inputmode="none" data-next="6">
+    </div>
+
+    <div class="uinput center">
+        <div class="center row">
+            <div id="i1">1</div>
+            <div id="i2">2</div>
+            <div id="i3">3</div>
+        </div>
+
+        <div class="center row">
+            <div id="i4">4</div>
+            <div id="i5">5</div>
+            <div id="i6">6</div>
+        </div>
+
+        <div class="center row">
+            <div id="i7">7</div>
+            <div id="i8">8</div>
+            <div id="i9">9</div>
+        </div>
+
+        <div class="center row">
+            <div id="backspace"><span>X</span></div>
+            <div id="i0">0</div>
+            <div id="done"><span>Go</span></div>
+        </div>  
+    </div>
+</div>
+
+<!--final value-->
+<input id="finalvalue" inputmode="none">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    let i=0;
+    const inputs = document.querySelectorAll(".tf > input");
+
+    //Auto Next while using screen number pad
+    $(document).ready(function()
+    {    
+        for(let q=0 ; q<10 ; q++)
+        {
+            $('#i'+q).click(function(){
+            $('#pininput' + i).val(q);
+            i++;
+            $('#pininput' + i).focus();
+
+                if(i<7){
+                    let fv = "";
+                    inputs.forEach((input) => {
+                        fv += input.value;
+                        input.disabled = true;
+                        input.classList.add("disabled");
+                    });
+                    $('#finalvalue').val(fv);
+                }
+            });
+        }
+    });
+
+    //Backspace function on mobile
+    $(document).ready(function()
+    {    
+        $('#backspace').click(function(){
+            $('#pininput' + (i-1)).val("");
+            $('#pininput' + (i-1)).focus();
+            i--;
+
+            let fv = "";
+            inputs.forEach((input) => {
+                fv += input.value;
+                input.classList.add("disabled");
+            });
+            $('#finalvalue').val(fv);
+        });
+    });
+
+    //Auto Next while using keyboard
+    $('.autoInputPin').keyup(function(e) {
+        if (this.value.length === this.maxLength) {
+            let next = $(this).data('next');
+            $('#pininput' + next).focus();
+
+            if(next<7)
+            {
+                let fv = "";
+                inputs.forEach((input) => {
+                    fv += input.value;
+                });
+                $('#finalvalue').val(fv);
+            }
+        }
+    });
+
+    //Backspace on keyboard
+    inputs.forEach((input , index) => {
+        input.dataset.index = index;
+        input.addEventListener("keyup",handleOtp);
+    })
+
+    function handleOtp(e)
+    {
+        const input = e.target;
+        let value = input.value;
+        input.value = "";
+        input.value = value ? value [0] : "";
+
+        let fieldIndex = input.dataset.index;
+        if(e.key === "Backspace" && fieldIndex > 0)
+        {
+            input.previousElementSibling.focus();
+            
+            let fv = "";
+            inputs.forEach((input) => {
+                fv += input.value;
+                
+            });
+            $('#finalvalue').val(fv);
+        }
+
+        if(fieldIndex == inputs.length -1)
+        {
+            submit();
+        }
+    }
+
+    function submit()
+    {
+        let fv = "";
+        inputs.forEach((input) => {
+            fv += input.value;
+            //input.disabled = true;
+            //input.classList.add("disabled");
+        });
+        $('#finalvalue').val(fv);
+    }
+</script>
