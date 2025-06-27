@@ -23,6 +23,6 @@ This project is licensed under the MIT License. Feel free to use or modify it.
 
 ## Author
 
-Created by [Zhi Jun Yep]  
+Created by [Zhi Jun Yeo]  
 Student @ [Multimedia University]  
 GitHub: [JdumB](https://github.com/JdumB)
